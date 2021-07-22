@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FeedController;
+use \App\Http\Controllers\ModeratorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,5 +27,10 @@ Route::get('/feed', [FeedController::class, 'feed'])->middleware(['auth']);
 Route::post('/addtoit', [FeedController::class, 'addtoit'])->middleware(['auth']);
 Route::get('/profile/{username}', [FeedController::class, 'profile'])->middleware(['auth']);
 
+Route::middleware(['auth', 'roles:moderator'])->group(function () {
+    Route::get('/moderate/reported', [ModeratorController::class, 'viewReported']);
+    Route::get('/moderate/accept/report/{toit_id}', [ModeratorController::class, 'acceptReport']);
+    Route::get('/moderate/reject/report/{toit_id}', [ModeratorController::class, 'rejectReport']);
+});
 
 require __DIR__.'/auth.php';

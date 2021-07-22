@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Toit;
 
 class User extends Authenticatable
 {
@@ -44,5 +45,12 @@ class User extends Authenticatable
 
     public function toits() {
         return $this->hasMany(Toit::class)->orderBy('created_at', 'DESC');
+    }
+
+    public function reportedToits() {
+        return $this->belongsToMany('Toit', 'user_reports_toits')
+            ->withPivot('violation')
+            ->withPivot('accepted')
+            ->withTimestamps();
     }
 }

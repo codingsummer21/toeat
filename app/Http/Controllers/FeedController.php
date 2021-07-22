@@ -29,7 +29,7 @@ class FeedController extends Controller
             $errors['error_text'] = "User $username not found";
             return view('toeat.errors.error', $errors);
         }
-        $context['toits'] = $context['user']->toits;
+        $context['toits'] = $context['user']->toits->where('display', 1);
 
         return view('toeat.profile', $context);
     }
