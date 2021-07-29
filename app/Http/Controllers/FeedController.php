@@ -9,7 +9,9 @@ use Illuminate\Http\Request;
 class FeedController extends Controller
 {
     function feed() {
-        return view('toeat.feed');
+        $user = auth()->user();
+        $context['toits'] = $user->feed();
+        return view('toeat.feed', $context);
     }
 
     function addtoit(Request $request) {
@@ -24,13 +26,42 @@ class FeedController extends Controller
     }
 
     function profile($username) {
+        $user = auth()->user();
         $context['user'] = User::where('name', $username)->first();
         if(!$context['user']) {
             $errors['error_text'] = "User $username not found";
             return view('toeat.errors.error', $errors);
         }
         $context['toits'] = $context['user']->toits->where('display', 1);
+        $context['followers'] = $context['user']->followers;
+        $context['following'] = $context['user']->following;
+        $context['is_current_user'] = $user->id == $context['user']->id;
+        $context['unfollow'] = $context['followers']->contains($user);
 
         return view('toeat.profile', $context);
+    }
+
+    function follow($id) {
+        $followingUser = User::find($id);
+        if(!$followingUser) {
+            $errors['error_text'] = "User with ID $id not found";
+            return view('toeat.errors.error', $errors);
+        }
+        $user = auth()->user();
+        $user->following()->attach($id);
+
+        return redirect('/profile/' . $followingUser->name);
+    }
+
+    function unfollow($id) {
+        $followingUser = User::find($id);
+        if(!$followingUser) {
+            $errors['error_text'] = "User with ID $id not found";
+            return view('toeat.errors.error', $errors);
+        }
+        $user = auth()->user();
+        $user->following()->detach($id);
+
+        return redirect('/profile/' . $followingUser->name);
     }
 }

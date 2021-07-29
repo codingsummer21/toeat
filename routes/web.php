@@ -26,6 +26,8 @@ Route::get('/dashboard', function () {
 Route::get('/feed', [FeedController::class, 'feed'])->middleware(['auth']);
 Route::post('/addtoit', [FeedController::class, 'addtoit'])->middleware(['auth']);
 Route::get('/profile/{username}', [FeedController::class, 'profile'])->middleware(['auth']);
+Route::get('/follow/{id}', [FeedController::class, 'follow'])->middleware(['auth']);
+Route::get('/unfollow/{id}', [FeedController::class, 'unfollow'])->middleware(['auth']);
 
 Route::middleware(['auth', 'roles:moderator'])->group(function () {
     Route::get('/moderate/reported', [ModeratorController::class, 'viewReported']);

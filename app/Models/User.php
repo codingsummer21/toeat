@@ -43,14 +43,44 @@ class User extends Authenticatable
     ];
 
 
-    public function toits() {
+    public function toits()
+    {
         return $this->hasMany(Toit::class)->orderBy('created_at', 'DESC');
     }
 
-    public function reportedToits() {
+    public function reportedToits()
+    {
         return $this->belongsToMany('Toit', 'user_reports_toits')
             ->withPivot('violation')
             ->withPivot('accepted')
             ->withTimestamps();
+    }
+
+    public function following()
+    {
+        return $this->belongsToMany('App\Models\User', 'user_follows_users', 'user_id', 'following_id')
+            ->withTimestamps();
+    }
+
+    public function followers()
+    {
+        return $this->belongsToMany('App\Models\User', 'user_follows_users', 'following_id')
+            ->withTimestamps();
+    }
+
+    public function feed()
+    {
+        // return $this->hasManyThrough('App\Models\Toit', 'App\Models\User', 'id');
+        $users = $this->following;
+        $toits = null;
+        foreach ($users as $user) {
+            if($toits == null) {
+                $toits = $user->toits;
+            }
+            else {
+                $toits = $toits->merge($user->toits);
+            }
+        }
+        return $toits;
     }
 }

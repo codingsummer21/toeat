@@ -7,7 +7,25 @@
         <h1>&commat;{{ $user->name }}</h1>
     </div>
     <div>
-        <button>Follow</button>
+        Followers:<br>
+        @foreach($followers as $follower)
+            {{ $follower->name }}<br>
+        @endforeach
+    </div>
+    <div>
+        Following:<br>
+        @foreach($following as $following)
+            {{ $following->name }}<br>
+        @endforeach
+    </div>
+    <div>
+        @if(!$is_current_user)
+            @if($unfollow)
+                <a href="/unfollow/{{$user->id}}"><button>Unfollow</button></a>
+            @else
+                <a href="/follow/{{$user->id}}"><button>Follow</button></a>
+            @endif
+        @endif
     </div>
 
     <div>

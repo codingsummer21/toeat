@@ -10,4 +10,12 @@
             <input type="submit">
         </form>
     </div>
+
+    <div>
+        <h2>Feed</h2>
+        @foreach($toits as $toit)
+            <div><b>{{$toit->user->name}}</b><br>
+                {{$toit->content}}</div>
+        @endforeach
+    </div>
 @endsection
